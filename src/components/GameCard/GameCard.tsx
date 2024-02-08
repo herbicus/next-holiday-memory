@@ -1,4 +1,4 @@
-import React, { useEffect, forwardRef } from "react";
+import React, { useEffect, forwardRef, useRef } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 
@@ -11,48 +11,84 @@ interface GameCardProps {
 }
 
 const GameCard = forwardRef<HTMLDivElement, GameCardProps>(
-  ({ playCard, matched, isFlipped, isMatched, onClick }, ref) => {
-    // Use a function to determine the image URL
-    const getImageUrl = () => {
-      if (isMatched) return matched;
-      if (isFlipped) return playCard;
-      return "/img/cards.png";
-    };
+  ({ playCard, matched, isFlipped, isMatched, onClick }, ref: any) => {
+    const frontside = useRef<HTMLDivElement>(null);
+    const backside = useRef<HTMLDivElement>(null);
 
-    const imageUrl = getImageUrl();
-
-    // Trigger the flip animation when isFlipped or isMatched changes
     useEffect(() => {
-      if (ref && "current" in ref && ref.current) {
-        gsap.to(ref.current, {
-          rotationY: isFlipped || isMatched ? 180 : 0,
-          ease: "back.out(1.7)",
-          duration: 0.8,
-        });
-      }
-    }, [isFlipped, isMatched, ref]);
+      gsap.set([backside.current, frontside.current], {
+        backfaceVisibility: "hidden",
+      });
+    }, [ref]);
 
-    const handleClick = () => {
-      if (!isMatched) {
-        onClick();
+    // Animate the card flip
+    useEffect(() => {
+      const timeline = gsap.timeline();
+
+      if (isFlipped || isMatched) {
+        timeline
+          .to(frontside.current, {
+            ease: "power4.out",
+            duration: 0.8,
+            rotationY: 0,
+          })
+          .to(
+            backside.current,
+            { ease: "power4.out", duration: 0.8, rotationY: 180 },
+            0
+          );
+      } else {
+        timeline
+          .to(frontside.current, {
+            ease: "power4.out",
+            duration: 0.6,
+            rotationY: -180,
+          })
+          .to(
+            backside.current,
+            {
+              ease: "power4.out",
+              duration: 0.6,
+              rotationY: 0,
+            },
+            0
+          );
       }
-    };
+
+      // If the card is matched, set the frontside opacity to full (show the matched state)
+      if (isMatched) {
+        gsap.set(frontside.current, { autoAlpha: 0 });
+        gsap.set(backside.current, { autoAlpha: 1 });
+      }
+    }, [isFlipped, isMatched]);
 
     return (
       <div
         ref={ref}
         className="relative w-[260px] h-[165px]"
-        onClick={handleClick}
+        onClick={onClick}
         role="button"
         tabIndex={0}
       >
-        <Image
-          src={imageUrl}
-          alt={isFlipped ? "Card Frontside" : "Card Backside"}
-          className="object-cover absolute w-full h-full"
-          layout="fill"
-          priority
-        />
+        <div ref={backside} className="absolute inset-0">
+          <Image
+            src="/img/cards.png"
+            alt="Card Backside"
+            width={260}
+            height={165}
+            className="object-cover"
+            priority
+          />
+        </div>
+        <div ref={frontside} className="absolute inset-0">
+          <Image
+            src={isMatched ? matched : playCard}
+            alt="Card Frontside"
+            width={260}
+            height={165}
+            className="object-cover"
+          />
+        </div>
       </div>
     );
   }
@@ -61,52 +97,3 @@ const GameCard = forwardRef<HTMLDivElement, GameCardProps>(
 GameCard.displayName = "GameCard";
 
 export default GameCard;
-
-// import React from "react";
-// import Image from "next/image";
-
-// interface GameCardProps {
-//   playCard: string;
-//   matched: string;
-//   isFlipped: boolean;
-//   isMatched: boolean;
-//   onClick: () => void; // This function would be passed down from the parent component
-// }
-
-// const GameCard: React.FC<GameCardProps> = ({
-//   playCard,
-//   matched,
-//   isFlipped,
-//   isMatched,
-//   onClick,
-// }) => {
-//   // Determine which image to display
-//   const imageUrl = isMatched
-//     ? matched
-//     : isFlipped
-//       ? playCard
-//       : "/img/cards.png";
-
-//   // TODO: instead of "flipClass", we want to use GSAP.to() and flip the <figure>
-//   // flipping only if the cards haven't matched. When two cards are matched, they never
-//   // flip or can be interacted with
-//   const flipClass = isFlipped ? "flip-class" : "";
-
-//   return (
-//     <figure className="relative" onClick={onClick} role="button">
-//       <Image
-//         src={imageUrl}
-//         alt={isFlipped ? "Card Frontside" : "Card Backside"}
-//         className={`${isMatched ? "matched-class" : ""}`}
-//         width={260}
-//         height={165}
-//         priority
-//       />
-//       <figcaption className="sr-only">
-//         {isFlipped ? "Card Frontside" : "Card Backside"}
-//       </figcaption>
-//     </figure>
-//   );
-// };
-
-// export default GameCard;
