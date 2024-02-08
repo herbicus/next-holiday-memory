@@ -57,8 +57,8 @@ const GameCard = forwardRef<HTMLDivElement, GameCardProps>(
 
       // If the card is matched, set the frontside opacity to full (show the matched state)
       if (isMatched) {
-        gsap.set(frontside.current, { autoAlpha: 0 });
-        gsap.set(backside.current, { autoAlpha: 1 });
+        gsap.set(frontside.current, { autoAlpha: 1 });
+        gsap.set(backside.current, { autoAlpha: 0 });
       }
     }, [isFlipped, isMatched]);
 
