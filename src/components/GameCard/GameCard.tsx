@@ -19,7 +19,7 @@ const GameCard = forwardRef<HTMLDivElement, GameCardProps>(
       gsap.set([backside.current, frontside.current], {
         backfaceVisibility: "hidden",
       });
-    }, [ref]);
+    }, []);
 
     // Animate the card flip
     useEffect(() => {
@@ -60,12 +60,14 @@ const GameCard = forwardRef<HTMLDivElement, GameCardProps>(
         gsap.set(frontside.current, { autoAlpha: 1 });
         gsap.set(backside.current, { autoAlpha: 0 });
       }
+
+
     }, [isFlipped, isMatched]);
 
     return (
       <div
         ref={ref}
-        className="relative w-[260px] h-[165px]"
+        className="relative w-[260px] h-[165px] my-[7px] mx-2.5"
         onClick={onClick}
         role="button"
         tabIndex={0}
