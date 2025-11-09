@@ -28,18 +28,19 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} relative h-full w-full antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} relative h-full w-full antialiased bg-cover bg-no-repeat`}
+        style={{ backgroundImage: "url('/img/bg_temp.jpg')" }}
       >
         <GameProvider>{children}</GameProvider>
 
-        <Image
+        {/* <Image
           src="/img/bg_temp.jpg"
           alt=""
           className="absolute top-0 left-0 w-full h-full object-cover"
           fill
           priority
           role="presentation"
-        />
+        /> */}
       </body>
     </html>
   );

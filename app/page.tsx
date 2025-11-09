@@ -216,7 +216,7 @@ export default function Home() {
     currentAnimationCard !== null ? cards[currentAnimationCard] : null;
 
   return (
-    <div className="flex min-h-screen items-center bg-zinc-50 font-sans dark:bg-black relative">
+    <div className="flex min-h-screen items-center font-sans relative">
       {/* Audio element for playing match sounds */}
       <audio ref={audioRef} preload="auto" />
       {/* Audio element for card flip sounds */}
