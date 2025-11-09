@@ -37,6 +37,8 @@ export default function Home() {
   const endScreenRef = useRef<HTMLDivElement>(null);
   const prevFirstSelection = useRef<number | null>(null);
   const prevSecondSelection = useRef<number | null>(null);
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const hasAnimatedCards = useRef<boolean>(false);
 
   // Handle intro to game transition (triggered by CTA button click)
   const handleStartGame = () => {
@@ -170,6 +172,81 @@ export default function Home() {
     { dependencies: [showAnimation, currentAnimationCard, cards] }
   );
 
+  // Vegas-style card distribution animation
+  useGSAP(
+    () => {
+      if (
+        gameState === "playing" &&
+        cardRefs.current.length > 0 &&
+        !hasAnimatedCards.current
+      ) {
+        // Immediately hide all cards before animation
+        const validCardRefs = cardRefs.current.filter(
+          (ref): ref is HTMLDivElement => ref !== null
+        );
+
+        // Set initial opacity to 0 immediately to hide cards
+        validCardRefs.forEach((cardRef) => {
+          gsap.set(cardRef, { opacity: 0 });
+        });
+
+        // Use requestAnimationFrame to ensure DOM is fully laid out
+        requestAnimationFrame(() => {
+          if (validCardRefs.length === 0) return;
+
+          // Get the grid container to calculate center position
+          const gridContainer = validCardRefs[0]?.parentElement;
+          if (!gridContainer) return;
+
+          const containerRect = gridContainer.getBoundingClientRect();
+          const centerX = containerRect.width / 2;
+          const centerY = containerRect.height / 2;
+
+          // Set initial state: cards start from center with rotation and scale
+          validCardRefs.forEach((cardRef) => {
+            const cardRect = cardRef.getBoundingClientRect();
+            const cardCenterX =
+              cardRect.left - containerRect.left + cardRect.width / 2;
+            const cardCenterY =
+              cardRect.top - containerRect.top + cardRect.height / 2;
+
+            // Calculate offset from center
+            const offsetX = centerX - cardCenterX;
+            const offsetY = centerY - cardCenterY;
+
+            // Set initial position (centered, scaled down, rotated)
+            gsap.set(cardRef, {
+              x: offsetX,
+              y: offsetY,
+              rotation: gsap.utils.random(-180, 180), // Random rotation for each card
+              scale: 0,
+              opacity: 0, // Keep opacity 0
+            });
+          });
+
+          // Animate cards to their final positions with stagger
+          gsap.to(validCardRefs, {
+            x: 0,
+            y: 0,
+            rotation: 0,
+            scale: 1,
+            opacity: 1,
+            duration: 0.8,
+            ease: "back.out(1.7)", // Bouncy ease for card dealing effect
+            stagger: {
+              amount: 1.2, // Total stagger duration
+              from: "random", // Random order for more dynamic effect
+            },
+            onComplete: () => {
+              hasAnimatedCards.current = true;
+            },
+          });
+        });
+      }
+    },
+    { dependencies: [gameState, cards] }
+  );
+
   // Handle game to end screen transition
   useGSAP(
     () => {
@@ -208,6 +285,8 @@ export default function Home() {
   );
 
   const handleRestart = () => {
+    // Reset animation flag
+    hasAnimatedCards.current = false;
     // Reset game state
     window.location.reload(); // Simple restart - could be more elegant with state reset
   };
@@ -252,14 +331,21 @@ export default function Home() {
             const isMatched = matchedIndices.includes(index);
 
             return (
-              <GameCard
+              <div
                 key={index}
-                playCard={card.playCard}
-                matched={card.matched}
-                isFlipped={isFlipped}
-                isMatched={isMatched}
-                onClick={() => selectCard(index)}
-              />
+                ref={(el) => {
+                  cardRefs.current[index] = el;
+                }}
+                style={{ opacity: 0 }}
+              >
+                <GameCard
+                  playCard={card.playCard}
+                  matched={card.matched}
+                  isFlipped={isFlipped}
+                  isMatched={isMatched}
+                  onClick={() => selectCard(index)}
+                />
+              </div>
             );
           })}
 
