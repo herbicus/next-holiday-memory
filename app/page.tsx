@@ -124,73 +124,83 @@ export default function Home() {
   }, [firstSelection, secondSelection, showAnimation]);
 
   // Handle animation overlay visibility and audio playback
-  useGSAP(() => {
-    if (
-      showAnimation &&
-      currentAnimationCard !== null &&
-      animationOverlayRef.current
-    ) {
-      const card = cards[currentAnimationCard];
+  useGSAP(
+    () => {
+      if (
+        showAnimation &&
+        currentAnimationCard !== null &&
+        animationOverlayRef.current
+      ) {
+        const card = cards[currentAnimationCard];
 
-      // Play audio
-      if (card.audio && audioRef.current) {
-        audioRef.current.src = card.audio;
-        audioRef.current.play().catch((error) => {
-          console.error("Error playing audio:", error);
+        // Play audio
+        if (card.audio && audioRef.current) {
+          audioRef.current.src = card.audio;
+          audioRef.current.play().catch((error) => {
+            console.error("Error playing audio:", error);
+          });
+        }
+
+        // Fade in animation overlay
+        gsap.fromTo(
+          animationOverlayRef.current,
+          { opacity: 0 },
+          { opacity: 1, duration: 0.5, ease: "power2.inOut" }
+        );
+      } else if (!showAnimation && animationOverlayRef.current) {
+        // Fade out animation overlay
+        gsap.to(animationOverlayRef.current, {
+          opacity: 0,
+          duration: 0.5,
+          ease: "power2.inOut",
         });
-      }
 
-      // Fade in animation overlay
-      gsap.fromTo(
-        animationOverlayRef.current,
-        { opacity: 0 },
-        { opacity: 1, duration: 0.5, ease: "power2.inOut" }
-      );
-    } else if (!showAnimation && animationOverlayRef.current) {
-      // Fade out animation overlay
-      gsap.to(animationOverlayRef.current, {
-        opacity: 0,
-        duration: 0.5,
-        ease: "power2.inOut",
-      });
-
-      // Stop audio
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current.currentTime = 0;
+        // Stop audio
+        if (audioRef.current) {
+          audioRef.current.pause();
+          audioRef.current.currentTime = 0;
+        }
       }
-    }
-  }, { dependencies: [showAnimation, currentAnimationCard, cards] });
+    },
+    { dependencies: [showAnimation, currentAnimationCard, cards] }
+  );
 
   // Handle game to end screen transition
-  useGSAP(() => {
-    if (gameState === "ended" && gameBoardRef.current && endScreenRef.current) {
-      // Ensure end screen is visible but transparent
-      gsap.set(endScreenRef.current, { opacity: 0, zIndex: 50 });
+  useGSAP(
+    () => {
+      if (
+        gameState === "ended" &&
+        gameBoardRef.current &&
+        endScreenRef.current
+      ) {
+        // Ensure end screen is visible but transparent
+        gsap.set(endScreenRef.current, { opacity: 0, zIndex: 50 });
 
-      const tl = gsap.timeline();
+        const tl = gsap.timeline();
 
-      // Crossfade: fade out game board and fade in end screen simultaneously
-      tl.to(gameBoardRef.current, {
-        opacity: 0,
-        duration: 0.8,
-        ease: "power2.inOut",
-        onComplete: () => {
-          // Hide game board after fade
-          gsap.set(gameBoardRef.current, { zIndex: -1 });
-        },
-      }).to(
-        endScreenRef.current,
-        {
-          opacity: 1,
+        // Crossfade: fade out game board and fade in end screen simultaneously
+        tl.to(gameBoardRef.current, {
+          opacity: 0,
           duration: 0.8,
           ease: "power2.inOut",
-          zIndex: 50,
-        },
-        "-=0.8" // Start at the same time for true crossfade
-      );
-    }
-  }, { dependencies: [gameState] });
+          onComplete: () => {
+            // Hide game board after fade
+            gsap.set(gameBoardRef.current, { zIndex: -1 });
+          },
+        }).to(
+          endScreenRef.current,
+          {
+            opacity: 1,
+            duration: 0.8,
+            ease: "power2.inOut",
+            zIndex: 50,
+          },
+          "-=0.8" // Start at the same time for true crossfade
+        );
+      }
+    },
+    { dependencies: [gameState] }
+  );
 
   const handleRestart = () => {
     // Reset game state
@@ -222,15 +232,20 @@ export default function Home() {
       {/* Game Board - Always render but control visibility */}
       <main
         ref={gameBoardRef}
-        className="min-h-screen w-full relative py-4"
+        className="min-h-screen w-full relative pb-4"
         style={{
           opacity: gameState === "playing" ? 1 : 0,
           pointerEvents: gameState === "playing" ? "auto" : "none",
         }}
       >
-        {/* <h1 className="text-3xl font-semibold mb-8 text-black dark:text-zinc-50">
-          Holiday Memory Game
-        </h1> */}
+        <Image
+          src="/img/header.png"
+          width={895}
+          height={50}
+          className="w-full h-auto mx-auto"
+          alt="Artifact Holiday Memory"
+        />
+
         <div className="grid grid-cols-4 w-full max-w-[1120px] mx-auto gap-4 lg:gap-6 relative px-4">
           {cards.map((card, index) => {
             const isFlipped =
