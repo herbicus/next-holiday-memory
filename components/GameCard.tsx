@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, forwardRef, useRef } from "react";
 import Image from "next/image";
 import gsap from "gsap";
@@ -60,14 +61,13 @@ const GameCard = forwardRef<HTMLDivElement, GameCardProps>(
         gsap.set(frontside.current, { autoAlpha: 1 });
         gsap.set(backside.current, { autoAlpha: 0 });
       }
-
-
     }, [isFlipped, isMatched]);
 
     return (
       <div
         ref={ref}
-        className="relative w-[260px] h-[165px] my-[7px] mx-2.5"
+        // className="relative w-[260px] h-[165px] my-[7px] mx-2.5"
+        className="relative aspect-260/165 w-full"
         onClick={onClick}
         role="button"
         tabIndex={0}
