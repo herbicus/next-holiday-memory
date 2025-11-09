@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, forwardRef, useRef } from "react";
+import React, { forwardRef, useRef } from "react";
 import Image from "next/image";
 import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
 
 interface GameCardProps {
   playCard: string;
@@ -16,14 +17,14 @@ const GameCard = forwardRef<HTMLDivElement, GameCardProps>(
     const frontside = useRef<HTMLDivElement>(null);
     const backside = useRef<HTMLDivElement>(null);
 
-    useEffect(() => {
+    useGSAP(() => {
       gsap.set([backside.current, frontside.current], {
         backfaceVisibility: "hidden",
       });
-    }, []);
+    });
 
     // Animate the card flip
-    useEffect(() => {
+    useGSAP(() => {
       const timeline = gsap.timeline();
 
       if (isFlipped || isMatched) {
@@ -61,7 +62,7 @@ const GameCard = forwardRef<HTMLDivElement, GameCardProps>(
         gsap.set(frontside.current, { autoAlpha: 1 });
         gsap.set(backside.current, { autoAlpha: 0 });
       }
-    }, [isFlipped, isMatched]);
+    }, { dependencies: [isFlipped, isMatched] });
 
     return (
       <div

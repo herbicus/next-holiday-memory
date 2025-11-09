@@ -13,6 +13,9 @@
 
   --color-primary: "#393b39",
   --color-secondary: "#cd4828",
+  --color-holiday-red: "#ef7461",
+  --color-holiday-green: "#5abd9a",
+  --color-holiday-gray: "#595d5c",
 }
 
 body {

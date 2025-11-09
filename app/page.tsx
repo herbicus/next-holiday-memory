@@ -7,6 +7,7 @@ import EndScreen from "@/components/EndScreen";
 import { useEffect, useRef } from "react";
 import Image from "next/image";
 import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
 
 export default function Home() {
   const {
@@ -123,7 +124,7 @@ export default function Home() {
   }, [firstSelection, secondSelection, showAnimation]);
 
   // Handle animation overlay visibility and audio playback
-  useEffect(() => {
+  useGSAP(() => {
     if (
       showAnimation &&
       currentAnimationCard !== null &&
@@ -159,10 +160,10 @@ export default function Home() {
         audioRef.current.currentTime = 0;
       }
     }
-  }, [showAnimation, currentAnimationCard, cards]);
+  }, { dependencies: [showAnimation, currentAnimationCard, cards] });
 
   // Handle game to end screen transition
-  useEffect(() => {
+  useGSAP(() => {
     if (gameState === "ended" && gameBoardRef.current && endScreenRef.current) {
       // Ensure end screen is visible but transparent
       gsap.set(endScreenRef.current, { opacity: 0, zIndex: 50 });
@@ -189,7 +190,7 @@ export default function Home() {
         "-=0.8" // Start at the same time for true crossfade
       );
     }
-  }, [gameState]);
+  }, { dependencies: [gameState] });
 
   const handleRestart = () => {
     // Reset game state
