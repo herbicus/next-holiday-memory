@@ -30,6 +30,7 @@ const Header: React.FC = () => {
             height={146}
             className="w-full h-auto max-w-24 lg:max-w-36"
             alt="Artifact Design Logo"
+            priority
           />
         </a>
 

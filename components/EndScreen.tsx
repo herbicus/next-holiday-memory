@@ -64,20 +64,19 @@ export default function EndScreen({
       className="flex flex-col items-center justify-center w-full h-full"
     >
       <Image
-        src="/img/outro-page-bg.png"
+        src="/img/outro-bg.png"
         width={1920}
         height={1080}
         className="w-full h-full absolute inset-0 object-cover"
         alt=""
         role="presentation"
       />
-      <div className="text-center px-8 relative z-10">
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-center px-8 z-10">
         {onRestart && (
           <button
             ref={buttonRef}
             onClick={onRestart}
-            className="px-8 py-4 bg-white text-black text-xl font-semibold rounded-full hover:bg-neutral-200 transition-colors shadow-2xl"
-            style={{ opacity: 0 }}
+            className="cursor-pointer px-8 py-1 bg-[#f95257] text-white text-xl uppercase font-semibold rounded-full  whitespace-nowrap hover:bg-red-700 transition-colors shadow-2xl"
           >
             Play Again
           </button>
