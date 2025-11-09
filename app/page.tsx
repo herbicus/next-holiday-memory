@@ -1,13 +1,18 @@
 "use client";
 
+import { useEffect, useRef } from "react";
+import Image from "next/image";
+
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
+
 import { useGame } from "@/context/GameContext";
+
 import GameCard from "@/components/GameCard";
 import IntroScreen from "@/components/IntroScreen";
 import EndScreen from "@/components/EndScreen";
-import { useEffect, useRef } from "react";
-import Image from "next/image";
-import gsap from "gsap";
-import { useGSAP } from "@gsap/react";
+
+import Header from "@/components/Header";
 
 export default function Home() {
   const {
@@ -232,19 +237,13 @@ export default function Home() {
       {/* Game Board - Always render but control visibility */}
       <main
         ref={gameBoardRef}
-        className="min-h-screen w-full relative pb-4"
+        className="min-h-screen w-full relative py-4 flex flex-col"
         style={{
           opacity: gameState === "playing" ? 1 : 0,
           pointerEvents: gameState === "playing" ? "auto" : "none",
         }}
       >
-        <Image
-          src="/img/header.png"
-          width={895}
-          height={50}
-          className="w-full h-auto mx-auto"
-          alt="Artifact Holiday Memory"
-        />
+        <Header />
 
         <div className="grid grid-cols-4 w-full max-w-[1120px] mx-auto gap-4 lg:gap-6 relative px-4">
           {cards.map((card, index) => {

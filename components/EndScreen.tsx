@@ -61,7 +61,7 @@ export default function EndScreen({
   return (
     <div
       ref={containerRef}
-      className="flex flex-col items-center justify-center bg-gradient-to-br from-red-900 via-green-900 to-blue-900 w-full h-full"
+      className="flex flex-col items-center justify-center w-full h-full"
     >
       <Image
         src="/img/outro-page-bg.png"
@@ -71,26 +71,12 @@ export default function EndScreen({
         alt=""
         role="presentation"
       />
-      <div className="text-center px-8">
-        {/* <h1
-          ref={titleRef}
-          className="text-6xl font-bold text-white mb-6 drop-shadow-2xl"
-          style={{ opacity: 0 }}
-        >
-          🎉 Congratulations! 🎉
-        </h1>
-        <p
-          ref={messageRef}
-          className="text-2xl text-white mb-12 drop-shadow-lg"
-          style={{ opacity: 0 }}
-        >
-          You found all the matches!
-        </p> */}
+      <div className="text-center px-8 relative z-10">
         {onRestart && (
           <button
             ref={buttonRef}
             onClick={onRestart}
-            className="px-8 py-4 bg-white text-black text-xl font-semibold rounded-full hover:bg-gray-200 transition-colors shadow-2xl"
+            className="px-8 py-4 bg-white text-black text-xl font-semibold rounded-full hover:bg-neutral-200 transition-colors shadow-2xl"
             style={{ opacity: 0 }}
           >
             Play Again

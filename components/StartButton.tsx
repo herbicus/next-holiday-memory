@@ -90,7 +90,7 @@ const StartButton: React.FC<StartButtonProps> = ({ progress, onClick }) => {
       {/* Button text - always rendered, fades in when ready */}
       <span
         ref={buttonTextRef}
-        className="relative z-10 uppercase inline-block"
+        className="relative z-10 uppercase inline-block whitespace-nowrap"
         style={{ opacity: isReady ? 1 : 0 }}
       >
         Start Game
